@@ -1,5 +1,3 @@
-
-
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
@@ -10,7 +8,16 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Upload image to Cloudinary
+// Check if Cloudinary is configured
+const isCloudinaryConfigured = () => {
+  return !!(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+  );
+};
+
+// Upload single image to Cloudinary
 const uploadToCloudinary = async (filePath) => {
   try {
     const result = await cloudinary.uploader.upload(filePath, {
@@ -35,6 +42,12 @@ const uploadToCloudinary = async (filePath) => {
   }
 };
 
+// Upload multiple images to Cloudinary
+const uploadMultipleToCloudinary = async (files) => {
+  const uploadPromises = files.map(file => uploadToCloudinary(file.path));
+  return await Promise.all(uploadPromises);
+};
+
 // Delete image from Cloudinary
 const deleteFromCloudinary = async (imageUrl) => {
   try {
@@ -45,6 +58,9 @@ const deleteFromCloudinary = async (imageUrl) => {
   }
 };
 
-module.exports = { uploadToCloudinary, deleteFromCloudinary };
-
-
+module.exports = {
+  uploadToCloudinary,
+  uploadMultipleToCloudinary,
+  deleteFromCloudinary,
+  isCloudinaryConfigured
+};
