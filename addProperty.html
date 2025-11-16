@@ -25,36 +25,29 @@
         <h2 class="section-title">List Your Property</h2>
         <div style="max-width:720px;margin:0 auto;background:#0e0e0e;padding:1.8rem;border-radius:10px;border:1px solid rgba(255,255,255,0.04)">
           <form id="propertyForm" novalidate>
+  <label>Title *</label>
+  <input id="propertyTitle" type="text" required>
 
-            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Title *</label>
-            <input id="propertyTitle" type="text" placeholder="e.g. Spacious 2BHK near Moti Jheel" style="width:100%;padding:0.8rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff;margin-bottom:1rem">
+  <label>Rent (₹) *</label>
+  <input id="propertyPrice" type="number" required>
 
-            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Rent (₹) *</label>
-            <input id="propertyPrice" type="number" placeholder="e.g. 15000" style="width:100%;padding:0.8rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff;margin-bottom:1rem">
+  <label>BHK</label>
+  <select id="propertyBHK">
+    <option value="1">1 BHK</option>
+    <option value="2">2 BHK</option>
+    <option value="3">3+ BHK</option>
+  </select>
 
-            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">BHK</label>
-            <select id="propertyBHK" style="width:100%;padding:0.8rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff;margin-bottom:1rem">
-              <option value="1">1 BHK</option>
-              <option value="2">2 BHK</option>
-              <option value="3">3+ BHK</option>
-            </select>
+  <label>Address *</label>
+  <input id="propertyAddress" type="text" required>
 
-            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Address *</label>
-            <input id="propertyAddress" type="text" placeholder="Full address" style="width:100%;padding:0.8rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff;margin-bottom:1rem">
+  <label>Upload images (optional)</label>
+  <input id="propertyImages" type="file" accept="image/*" multiple>
 
-            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Image URL (optional)</label>
-            <div style="display:flex;gap:0.6rem;margin-bottom:0.8rem">
-              <input id="propertyImage" type="text" placeholder="Paste an image URL" style="flex:1;padding:1.0rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff">
-              <button id="previewUrlBtn" style="padding:0.6rem 0.9rem;border-radius:6px;border:none;background:#1abc9c;color:#041412;font-weight:700;cursor:pointer">Preview</button>
-            </div>
+  <div id="previewArea" aria-live="polite"></div>
 
-            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Or upload image(s) (optional)</label>
-            <input id="propertyImages" type="file" accept="image/*" multiple style="display:block;margin-bottom:0.6rem">
-
-            <div id="previewArea" aria-live="polite"></div>
-
-            <button type="submit" class="btn-primary" style="display:block;margin-top:0.8rem">Submit Property</button>
-          </form>
+  <button type="submit" class="btn-primary">Submit Property</button>
+</form>
         </div>
       </div>
     </section>
@@ -72,6 +65,9 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  
+  <script src="config.js"></script>
+  <script src="api-service.js"></script>
+  <script src="addProperty.js"></script>
 </body>
 </html>

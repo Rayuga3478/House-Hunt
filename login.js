@@ -1,62 +1,12 @@
-document.getElementById("loginForm").addEventListener("submit", function (e) {
+// Updated login.js - Integrated with Backend
+document.getElementById("loginForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    let email = document.getElementById("email").value.trim();
-    let password = document.getElementById("password").value;
-    let userType = document.getElementById("userType").value;
-
-    if (!userType) {
-        alert("Please select whether you are a Tenant or an Owner.");
-        return;
-    }
-
-    alert(
-        "Login Successful!\nType: " + userType.charAt(0).toUpperCase() + userType.slice(1)
-    );
-
-    // Redirect based on user type
-    if (userType === "owner") {
-        window.location.href = "owner-dashboard.html";
-    } else {
-        window.location.href = "tenant-dashboard.html";
-    }
-});
-
-// Firebase Imports
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { 
-    getAuth, 
-    signInWithEmailAndPassword, 
-    GoogleAuthProvider, 
-    signInWithPopup 
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
-// -------------------------
-// Firebase Config (YOUR DATA)
-// -------------------------
-const firebaseConfig = {
-    apiKey: "AIzaSyBrlsOxbezP7wfC9t3Bm1Ie9sw_ppv1g5c",
-    authDomain: "househunt-bb69f.firebaseapp.com",
-    projectId: "househunt-bb69f",
-    storageBucket: "househunt-bb69f.firebasestorage.app",
-    messagingSenderId: "693298899832",
-    appId: "1:693298899832:web:906b18aad5b092dea7b68d"
-};
-
-// Initialize Firebase + Auth
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-
-// -------------------------
-// EMAIL + PASSWORD LOGIN
-// -------------------------
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
+    const submitBtn = e.target.querySelector('.login-btn');
+    const originalText = submitBtn.textContent;
+    
     const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const password = document.getElementById("password").value;
     const userType = document.getElementById("userType").value;
 
     if (!userType) {
@@ -64,45 +14,56 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
         return;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-            alert("Login successful!");
+    // Disable button and show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Logging in...';
 
-            if (userType === "tenant") {
-                window.location.href = "search.html";
-            } else {
-                window.location.href = "addProperty.html";
-            }
-        })
-        .catch(error => {
-            alert(error.message);
+    try {
+        // Call backend API
+        const response = await ApiService.login({
+            email: email,
+            password: password
         });
+
+        console.log('Login successful:', response);
+
+        // Check if returned user role matches selected user type
+        const user = response.data.user;
+        if (user.role !== userType) {
+            alert(`This account is registered as ${user.role}, not ${userType}. Please select the correct user type.`);
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return;
+        }
+
+        alert("Login Successful!");
+
+        // Redirect based on user role
+        if (user.role === "owner") {
+            window.location.href = "addProperty.html";
+        } else {
+            window.location.href = "search.html";
+        }
+        
+    } catch (error) {
+        console.error('Login failed:', error);
+        alert(error.message || 'Invalid email or password. Please try again.');
+        
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+    }
 });
 
-
-// -------------------------
-// GOOGLE LOGIN
-// -------------------------
+// Google Login Button
 document.getElementById("googleLogin").addEventListener("click", function () {
-
     const userType = document.getElementById("userType").value;
 
     if (!userType) {
-        alert("Please select whether you are a Tenant or an Owner.");
+        alert("Please select whether you are a Tenant or an Owner before using Google login.");
         return;
     }
 
-    signInWithPopup(auth, provider)
-        .then(() => {
-            alert("Google Login successful!");
-
-            if (userType === "tenant") {
-                window.location.href = "search.html";
-            } else {
-                window.location.href = "addProperty.html";
-            }
-        })
-        .catch(error => {
-            alert(error.message);
-        });
+    // Note: Google OAuth integration would need to be set up on backend
+    alert("Google login integration requires backend OAuth setup. Please use email/password login for now.");
 });
