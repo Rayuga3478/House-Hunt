@@ -1,5 +1,10 @@
 const Property = require('../models/property');
 const ApiResponse = require('../utils/response');
+const {
+  uploadMultipleToCloudinary,
+  deleteFromCloudinary,
+  isCloudinaryConfigured
+} = require('../utils/cloudinary');
 
 // @desc    Create a new property
 // @route   POST /api/properties
@@ -11,7 +16,7 @@ exports.createProperty = async (req, res, next) => {
       description,
       address,
       city,
-      latitude,
+      latitude, 
       longitude,
       price,
       size,
@@ -58,7 +63,22 @@ exports.createProperty = async (req, res, next) => {
 
     // Handle image uploads
     if (req.files && req.files.length > 0) {
-      propertyData.images = req.files.map(file => `/uploads/${file.filename}`);
+      if (isCloudinaryConfigured()) {
+        // Upload to Cloudinary
+        try {
+          const imageUrls = await uploadMultipleToCloudinary(req.files);
+          propertyData.images = imageUrls;
+        } catch (error) {
+          return ApiResponse.error(
+            res,
+            'Failed to upload images. Please try again.',
+            500
+          );
+        }
+      } else {
+        // Fallback to local storage
+        propertyData.images = req.files.map(file => `/uploads/${file.filename}`);
+      }
     }
 
     const property = await Property.create(propertyData);
@@ -277,8 +297,23 @@ exports.updateProperty = async (req, res, next) => {
 
     // Handle new image uploads
     if (req.files && req.files.length > 0) {
-      const newImages = req.files.map(file => `/uploads/${file.filename}`);
-      updateData.images = [...property.images, ...newImages];
+      if (isCloudinaryConfigured()) {
+        // Upload new images to Cloudinary
+        try {
+          const newImageUrls = await uploadMultipleToCloudinary(req.files);
+          updateData.images = [...property.images, ...newImageUrls];
+        } catch (error) {
+          return ApiResponse.error(
+            res,
+            'Failed to upload images. Please try again.',
+            500
+          );
+        }
+      } else {
+        // Fallback to local storage
+        const newImages = req.files.map(file => `/uploads/${file.filename}`);
+        updateData.images = [...property.images, ...newImages];
+      }
     }
 
     property = await Property.findByIdAndUpdate(
@@ -307,6 +342,18 @@ exports.deleteProperty = async (req, res, next) => {
     // Check ownership
     if (property.owner.toString() !== req.user._id.toString()) {
       return ApiResponse.error(res, 'Not authorized to delete this property', 403);
+    }
+
+    // Delete images from Cloudinary if configured
+    if (isCloudinaryConfigured() && property.images.length > 0) {
+      // Only delete Cloudinary images (check if URL contains cloudinary.com)
+      const cloudinaryImages = property.images.filter(img => 
+        img.includes('cloudinary.com')
+      );
+      
+      for (const imageUrl of cloudinaryImages) {
+        await deleteFromCloudinary(imageUrl);
+      }
     }
 
     // Soft delete

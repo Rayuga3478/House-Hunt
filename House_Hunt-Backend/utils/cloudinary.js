@@ -1,7 +1,5 @@
-// Optional: Cloudinary integration
-// Install: npm install cloudinary
 
-/*
+
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
@@ -48,7 +46,5 @@ const deleteFromCloudinary = async (imageUrl) => {
 };
 
 module.exports = { uploadToCloudinary, deleteFromCloudinary };
-*/
 
-// Placeholder for local storage
-module.exports = {};
+

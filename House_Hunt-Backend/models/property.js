@@ -31,16 +31,23 @@ const propertySchema = new mongoose.Schema(
         required: [true, 'Please provide a city'],
         trim: true
       },
-      // Optional GeoJSON for geospatial queries
+      // ✅ FIX: Make coordinates completely optional
       coordinates: {
         type: {
           type: String,
-          enum: ['Point'],
-          default: 'Point'
+          enum: ['Point']
         },
         coordinates: {
           type: [Number], // [longitude, latitude]
-          index: '2dsphere'
+          validate: {
+            validator: function(coords) {
+              // Only validate if coordinates exist
+              return !coords || (coords.length === 2 && 
+                     coords[0] >= -180 && coords[0] <= 180 &&
+                     coords[1] >= -90 && coords[1] <= 90);
+            },
+            message: 'Invalid coordinates format'
+          }
         }
       }
     },
@@ -91,7 +98,8 @@ const propertySchema = new mongoose.Schema(
 
 // Indexes for performance
 propertySchema.index({ title: 'text', description: 'text' }); // Text search
-propertySchema.index({ 'location.coordinates': '2dsphere' }); // Geospatial
+// ✅ FIX: Make 2dsphere index optional (sparse: true)
+propertySchema.index({ 'location.coordinates': '2dsphere' }, { sparse: true }); // Geospatial
 propertySchema.index({ bedrooms: 1, price: 1 }); // Filter queries
 propertySchema.index({ 'location.city': 1 }); // City search
 propertySchema.index({ owner: 1 }); // Owner's properties
