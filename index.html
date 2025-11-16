@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HouseHunt - Find Your Next Home</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav container">
+      <a class="logo" href="index.html">HouseHunt</a>
+      <div class="nav-links">
+        <a href="search.html">Find a Home</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="addProperty.html">List Your Property</a>
+        <a href="sign-up.html" class="signup-btn">Sign Up</a>
+        <a href="login.html">Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="featured">
+      <div class="container hero-inner">
+        <div class="hero-left">
+          <h1>Find Your Next Home, Simply.</h1>
+          <p class="lead">
+            Explore verified rentals, connect instantly with property owners, and find the perfect home without the usual hassle.
+            Search by city, neighborhood, or ZIP code, filter by your preferences, and browse through high-quality listings tailored to your needs.
+          </p>
+
+          <div class="search-pill" role="search" aria-label="Search properties">
+            <input type="text" placeholder="Enter city, neighborhood, or zip code..." aria-label="Search location" />
+            <div class="search-controls">
+              <select name="filters" aria-label="Filters">
+                <option value="">Filters</option>
+                <option value="LTH">Low to High</option>
+                <option value="HTL">High to Low</option>
+              </select>
+              <select name="bhk" aria-label="BHK">
+                <option value="">1 BHK</option>
+                <option value="2">2 BHK</option>
+                <option value="3">3+ BHK</option>
+              </select>
+              <button class="search-btn" type="button">Search</button>
+            </div>
+          </div>
+
+          <ul class="left-list">
+            <li>100% verified and reliable properties</li>
+            <li>Direct communication with landlords — no middlemen</li>
+            <li>Smart filters including affordable &amp; student-friendly homes</li>
+            <li>Tools and resources to guide you at every step</li>
+            <li>Secure and transparent rental experience</li>
+            <li>Updated listings added daily</li>
+          </ul>
+        </div>
+
+        <aside class="hero-right">
+          <div class="side-card">
+            <div style="padding:1rem;color:rgba(255,255,255,0.8)">Featured listings & resources</div>
+          </div>
+
+          <div class="side-card">
+            <div style="padding:1rem;color:rgba(255,255,255,0.75)">
+              Want to list a property? <a href="addProperty.html" style="color:#1abc9c;text-decoration:underline">Create a listing</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+   <section id="social-impact" class="section">
+  <div class="container">
+    <h2 class="section-title">Housing for Everyone</h2>
+
+    <div class="social-impact-row">
+      
+      <!-- CENTER CONTENT -->
+      <div class="impact-content">
+        <h3 class="impact-title">Empowering Tenants and Building Community</h3>
+
+        <p class="impact-text">
+          We believe finding a home should be fair and accessible. HouseHunt is committed to increasing housing
+          availability and empowering tenants.
+        </p>
+
+        <ul class="impact-list">
+          <li><b>Affordable Housing Filter:</b> Easily find properties that meet local affordability criteria.</li>
+          <li><b>Fair Chance Program:</b> We partner with landlords open to applicants with diverse rental histories.</li>
+          <li><b>Tenant Education:</b> Access free resources on your rights, lease agreements, and financial planning.</li>
+        </ul>
+      </div>
+
+      <!-- RIGHT BUTTONS -->
+      <div class="impact-buttons">
+        
+     <!-- Budget Calculator (anchor tile) -->
+<a href="https://www.calculator.net/budget-calculator.html"
+   target="_blank"
+   class="impact-button impact-button-green"
+   style="text-decoration:none; display:flex; align-items:center; gap:1rem;">
+  <div class="impact-btn-icon">
+    <img src="bg calc.png" alt="Calculator icon">
+  </div>
+  <div class="impact-btn-text">
+    <div class="btn-title">Budget Calculator</div>
+    <div class="btn-sub">Estimate your monthly rent affordability</div>
+  </div>
+</a>
+
+<!-- Area Converter (anchor tile) -->
+<a href="https://www.thecalculatorsite.com/conversions/area.php"
+   target="_blank"
+   class="impact-button impact-button-green"
+   style="text-decoration:none; display:flex; align-items:center; gap:1rem;">
+  <div class="impact-btn-icon">
+    <img src="areacalc.png" alt="Area converter icon">
+  </div>
+  <div class="impact-btn-text">
+    <div class="btn-title">Area Converter</div>
+    <div class="btn-sub">Sq ft ⇆ Sq m conversions</div>
+  </div>
+</a>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+  </main>
+
+<section id="how-it-works" class="how-it-works-section container">
+  
+  <h3 class="how-title">How HouseHunt Works</h3>
+
+  <div class="how-paragraphs">
+    <div class="how-block">
+      <h4 class="step-title">1. Landlords publish listings</h4>
+      <p class="step-desc">
+        Landlords create detailed listings including rent, exact location, high-quality photos and amenity
+        descriptions. Each listing is reviewed and tagged for verification so renters can trust the information and
+        quickly find homes that match their needs.
+      </p>
+    </div>
+
+    <div class="how-block">
+      <h4 class="step-title">2. Tenants search with smart filters</h4>
+      <p class="step-desc">
+        Tenants browse by city, neighborhood, or ZIP code and refine results using smart filters like budget, BHK,
+        pet policy, accessibility features and affordable-housing options. Saved alerts keep renters updated without
+        repeated searching.
+      </p>
+    </div>
+
+    <div class="how-block">
+      <h4 class="step-title">3. Connect, schedule & negotiate</h4>
+      <p class="step-desc">
+        Tenants contact landlords directly through secure in-app messaging, request viewings and discuss lease terms.
+        Everything stays organized with message history and built-in scheduling tools.
+      </p>
+    </div>
+
+    <div class="how-block">
+      <h4 class="step-title">4. Tools & ongoing support</h4>
+      <p class="step-desc">
+        HouseHunt provides calculators, size converters, lease templates and tenant education materials. Fair Chance
+        programs and support resources help create a smoother, more transparent rental experience for everyone.
+      </p>
+    </div>
+  </div>
+
+  <!-- CENTERED BUTTONS -->
+  <div class="how-buttons">
+    <button class="tool-pill" onclick="location.href='search.html'">
+      <span class="pill-inner"><span class="pill-label">Search Homes</span></span>
+    </button>
+
+    <button class="tool-pill" onclick="location.href='addProperty.html'">
+      <span class="pill-inner"><span class="pill-label">List a Property</span></span>
+    </button>
+  </div>
+
+</section>
+
+
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>HouseHunt</h4>
+          <p>Our mission is to make the rental process simple, transparent, and fair for everyone.</p>
+        </div>
+        <div class="footer-col">
+          <h4>For Tenants</h4>
+          <ul><li><a href="search.html">Search Homes</a></li><li><a href="#">Affordable Housing</a></li><li><a href="helpCenter.html">Help Center</a></li></ul>
+        </div>
+        <div class="footer-col">
+          <h4>For Landlords</h4>
+          <ul><li><a href="addProperty.html">List a Property</a></li></ul>
+        </div>
+        <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+        <li><a href="aboutUs.html">About Us</a></li>   <!-- FIXED -->
+        <li><a href="#">Our Social Impact</a></li>
+        </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2025 HouseHunt, Inc. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // small JS stubs to show how the buttons could be wired
+    document.getElementById('budgetCalculatorBtn')?.addEventListener('click', () => {
+      // open a modal or navigate — replace with your implementation
+      alert('Open Budget Calculator (wire this to your modal or page).');
+    });
+    document.getElementById('areaConverterBtn')?.addEventListener('click', () => {
+      alert('Open Area Converter (wire this to your modal or page).');
+    });
+  </script>
+</body>
+</html>

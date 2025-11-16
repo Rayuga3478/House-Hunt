@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HouseHunt - Search Results</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav container">
+      <a class="logo" href="index.html">HouseHunt</a>
+      <div class="nav-links">
+        <a href="search.html">Find a Home</a>
+        <a href="index.html#how-it-works">How It Works</a>
+        <a href="addProperty.html">List Your Property</a>
+        <a href="sign-up.html">Sign Up</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Script will render content inside this container -->
+    <div id="searchContent" class="container" aria-live="polite"></div>
+  </main>
+
+  <!-- Property details modal -->
+  <div id="propertyModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-overlay" data-close="true"></div>
+    <div class="modal-content" role="document" aria-labelledby="modalAddress">
+      <button class="modal-close" aria-label="Close details">&times;</button>
+      <div class="modal-grid">
+        <div class="modal-image-wrap">
+          <img id="modalImage" alt="Property image">
+        </div>
+        <div class="modal-body">
+          <h3 id="modalAddress"></h3>
+          <div id="modalPrice" class="modal-price"></div>
+          <div id="modalDetails" class="modal-details"></div>
+          <div style="margin-top:1.6rem;">
+            <button id="modalContact" class="btn-primary">Contact Owner</button>
+            <button id="modalCloseBtn" class="btn-secondary" style="margin-left:1rem;">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-grid">
+        <div class="footer-col"><h4>HouseHunt</h4><p>Our mission is to make the rental process simple, transparent, and fair for everyone.</p></div>
+        <div class="footer-col"><h4>For Tenants</h4><ul><li><a href="search.html">Search Homes</a></li><li><a href="#">Affordable Housing</a></li><li><a href="#">Help Center</a></li></ul></div>
+        <div class="footer-col"><h4>For Landlords</h4><ul><li><a href="addProperty.html">List a Property</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">© 2025 HouseHunt, Inc. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

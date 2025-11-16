@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HouseHunt - List Your Property</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav class="nav container">
+      <a class="logo" href="index.html">HouseHunt</a>
+      <div class="nav-links">
+        <a href="search.html">Find a Home</a>
+        <a href="index.html#how-it-works">How It Works</a>
+        <a href="addProperty.html">List Your Property</a>
+        <a href="index.html#signup">Sign Up</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">List Your Property</h2>
+        <div style="max-width:720px;margin:0 auto;background:#0e0e0e;padding:1.8rem;border-radius:10px;border:1px solid rgba(255,255,255,0.04)">
+          <form id="propertyForm" novalidate>
+
+            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Title *</label>
+            <input id="propertyTitle" type="text" placeholder="e.g. Spacious 2BHK near Moti Jheel" style="width:100%;padding:0.8rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff;margin-bottom:1rem">
+
+            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Rent (₹) *</label>
+            <input id="propertyPrice" type="number" placeholder="e.g. 15000" style="width:100%;padding:0.8rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff;margin-bottom:1rem">
+
+            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">BHK</label>
+            <select id="propertyBHK" style="width:100%;padding:0.8rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff;margin-bottom:1rem">
+              <option value="1">1 BHK</option>
+              <option value="2">2 BHK</option>
+              <option value="3">3+ BHK</option>
+            </select>
+
+            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Address *</label>
+            <input id="propertyAddress" type="text" placeholder="Full address" style="width:100%;padding:0.8rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff;margin-bottom:1rem">
+
+            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Image URL (optional)</label>
+            <div style="display:flex;gap:0.6rem;margin-bottom:0.8rem">
+              <input id="propertyImage" type="text" placeholder="Paste an image URL" style="flex:1;padding:1.0rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:#0b0b0b;color:#fff">
+              <button id="previewUrlBtn" style="padding:0.6rem 0.9rem;border-radius:6px;border:none;background:#1abc9c;color:#041412;font-weight:700;cursor:pointer">Preview</button>
+            </div>
+
+            <label style="display:block;margin-bottom:0.6rem;color:#fff;font-weight:700;font-size:1.5rem">Or upload image(s) (optional)</label>
+            <input id="propertyImages" type="file" accept="image/*" multiple style="display:block;margin-bottom:0.6rem">
+
+            <div id="previewArea" aria-live="polite"></div>
+
+            <button type="submit" class="btn-primary" style="display:block;margin-top:0.8rem">Submit Property</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-grid">
+        <div class="footer-col"><h4>HouseHunt</h4><p>Our mission is to make renting simple, transparent, and fair for everyone.</p></div>
+        <div class="footer-col"><h4>For Tenants</h4><ul><li><a href="#">Search Homes</a></li><li><a href="#">Tenant Resources</a></li><li><a href="#">Affordable Housing</a></li><li><a href="#">Help Center</a></li></ul></div>
+        <div class="footer-col"><h4>For Landlords</h4><ul><li><a href="#">List a Property</a></li><li><a href="#">Pricing</a></li><li><a href="#">Landlord Dashboard</a></li><li><a href="#">Screening Tools</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Our Social Impact</a></li><li><a href="#">Careers</a></li><li><a href="#">Privacy Policy</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">© 2025 HouseHunt, Inc. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
