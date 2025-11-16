@@ -31,46 +31,83 @@ const createPropertySchema = Joi.object({
       'string.empty': 'City is required'
     }),
   
-  latitude: Joi.number().min(-90).max(90).optional(),
-  longitude: Joi.number().min(-180).max(180).optional(),
+  // Allow string or number for coordinates (form data sends strings)
+  latitude: Joi.alternatives()
+    .try(
+      Joi.number().min(-90).max(90),
+      Joi.string().pattern(/^-?\d+(\.\d+)?$/).allow('')
+    )
+    .optional(),
   
-  price: Joi.number()
-    .positive()
+  longitude: Joi.alternatives()
+    .try(
+      Joi.number().min(-180).max(180),
+      Joi.string().pattern(/^-?\d+(\.\d+)?$/).allow('')
+    )
+    .optional(),
+  
+  // Allow string or number for numeric fields
+  price: Joi.alternatives()
+    .try(
+      Joi.number().positive(),
+      Joi.string().pattern(/^\d+(\.\d+)?$/)
+    )
     .required()
     .messages({
-      'number.base': 'Price must be a number',
-      'number.positive': 'Price must be greater than 0'
+      'any.required': 'Price is required',
+      'alternatives.match': 'Price must be a positive number'
     }),
   
-  size: Joi.number()
-    .positive()
+  size: Joi.alternatives()
+    .try(
+      Joi.number().positive(),
+      Joi.string().pattern(/^\d+(\.\d+)?$/)
+    )
     .required()
     .messages({
-      'number.base': 'Size must be a number',
-      'number.positive': 'Size must be greater than 0'
+      'any.required': 'Size is required',
+      'alternatives.match': 'Size must be a positive number'
     }),
   
-  bedrooms: Joi.number()
-    .integer()
-    .min(1)
+  bedrooms: Joi.alternatives()
+    .try(
+      Joi.number().integer().min(1),
+      Joi.string().pattern(/^\d+$/)
+    )
     .required()
     .messages({
-      'number.base': 'Bedrooms must be a number',
-      'number.integer': 'Bedrooms must be an integer',
-      'number.min': 'Bedrooms must be at least 1'
+      'any.required': 'Bedrooms is required',
+      'alternatives.match': 'Bedrooms must be a positive integer'
     }),
   
-  parking: Joi.boolean().default(false),
-  balcony: Joi.boolean().default(false),
+  // Handle boolean strings from form data
+  parking: Joi.alternatives()
+    .try(
+      Joi.boolean(),
+      Joi.string().valid('true', 'false', '')
+    )
+    .default(false),
+  
+  balcony: Joi.alternatives()
+    .try(
+      Joi.boolean(),
+      Joi.string().valid('true', 'false', '')
+    )
+    .default(false),
   
   amenities: Joi.alternatives()
     .try(
       Joi.array().items(Joi.string()),
-      Joi.string()
+      Joi.string().allow('')
     )
     .optional(),
   
-  isPublished: Joi.boolean().default(true)
+  isPublished: Joi.alternatives()
+    .try(
+      Joi.boolean(),
+      Joi.string().valid('true', 'false', '')
+    )
+    .default(true)
 });
 
 const updatePropertySchema = Joi.object({
@@ -78,20 +115,69 @@ const updatePropertySchema = Joi.object({
   description: Joi.string().min(20).max(2000).optional(),
   address: Joi.string().optional(),
   city: Joi.string().optional(),
-  latitude: Joi.number().min(-90).max(90).optional(),
-  longitude: Joi.number().min(-180).max(180).optional(),
-  price: Joi.number().positive().optional(),
-  size: Joi.number().positive().optional(),
-  bedrooms: Joi.number().integer().min(1).optional(),
-  parking: Joi.boolean().optional(),
-  balcony: Joi.boolean().optional(),
+  
+  latitude: Joi.alternatives()
+    .try(
+      Joi.number().min(-90).max(90),
+      Joi.string().pattern(/^-?\d+(\.\d+)?$/).allow('')
+    )
+    .optional(),
+  
+  longitude: Joi.alternatives()
+    .try(
+      Joi.number().min(-180).max(180),
+      Joi.string().pattern(/^-?\d+(\.\d+)?$/).allow('')
+    )
+    .optional(),
+  
+  price: Joi.alternatives()
+    .try(
+      Joi.number().positive(),
+      Joi.string().pattern(/^\d+(\.\d+)?$/)
+    )
+    .optional(),
+  
+  size: Joi.alternatives()
+    .try(
+      Joi.number().positive(),
+      Joi.string().pattern(/^\d+(\.\d+)?$/)
+    )
+    .optional(),
+  
+  bedrooms: Joi.alternatives()
+    .try(
+      Joi.number().integer().min(1),
+      Joi.string().pattern(/^\d+$/)
+    )
+    .optional(),
+  
+  parking: Joi.alternatives()
+    .try(
+      Joi.boolean(),
+      Joi.string().valid('true', 'false', '')
+    )
+    .optional(),
+  
+  balcony: Joi.alternatives()
+    .try(
+      Joi.boolean(),
+      Joi.string().valid('true', 'false', '')
+    )
+    .optional(),
+  
   amenities: Joi.alternatives()
     .try(
       Joi.array().items(Joi.string()),
-      Joi.string()
+      Joi.string().allow('')
     )
     .optional(),
-  isPublished: Joi.boolean().optional()
+  
+  isPublished: Joi.alternatives()
+    .try(
+      Joi.boolean(),
+      Joi.string().valid('true', 'false', '')
+    )
+    .optional()
 });
 
 module.exports = {
