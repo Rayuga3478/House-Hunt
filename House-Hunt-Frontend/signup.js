@@ -1,4 +1,4 @@
-// Updated signup.js - Integrated with Backend
+// Updated signup.js - Integrated with Backend (role selection added)
 document.getElementById("signupForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
@@ -10,6 +10,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
+    const role = document.querySelector('input[name="role"]:checked')?.value || 'tenant'; // default tenant
 
     // Client-side validation
     if (password !== confirmPassword) {
@@ -32,7 +33,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
             name: name,
             email: email,
             password: password,
-            role: 'tenant' // Default role, can be changed based on user selection
+            role: role // use selected role
         });
 
         alert("Account Created Successfully!");

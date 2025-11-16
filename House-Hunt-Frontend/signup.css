@@ -86,3 +86,46 @@ input:focus {
 .login-text a:hover {
     text-decoration: underline;
 }
+/* Role Selection Styling */
+.role-selection {
+    margin: 10px 0 20px 0;
+}
+
+.role-selection label {
+    font-size: 14px;
+    color: #cccccc;
+    margin-right: 18px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Custom radio button */
+.role-selection input[type="radio"] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #00eaff;
+    border-radius: 50%;
+    margin-right: 6px;
+    background: #0a0a0a;
+    cursor: pointer;
+    position: relative;
+}
+
+.role-selection input[type="radio"]:checked::before {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #00eaff;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.role-selection input[type="radio"]:focus {
+    outline: none;
+    box-shadow: 0 0 8px #00eaff;
+}
