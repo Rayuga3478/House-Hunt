@@ -48,6 +48,30 @@ const errorHandler = (err, req, res, next) => {
     }
   }
 
+  // File system errors
+  if (err.code === 'ENOENT') {
+    return res.status(500).json({
+      success: false,
+      message: 'File system error - uploads directory may not exist',
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+  }
+
+  // JWT errors
+  if (err.name === 'JsonWebTokenError') {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid token'
+    });
+  }
+
+  if (err.name === 'TokenExpiredError') {
+    return res.status(401).json({
+      success: false,
+      message: 'Token expired'
+    });
+  }
+
   // Default error
   res.status(err.statusCode || 500).json({
     success: false,
