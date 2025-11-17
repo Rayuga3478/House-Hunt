@@ -28,7 +28,7 @@ const signupSchema = Joi.object({
     }),
   
   role: Joi.string()
-    .valid('owner', 'tenant')
+    .valid('owner', 'tenant','admin')
     .default('tenant')
     .messages({
       'any.only': 'Role must be either owner or tenant'
