@@ -7,6 +7,14 @@ const requireRole = (...roles) => {
       });
     }
 
+    // Check if user is blocked
+    if (req.user.isBlocked && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been blocked. Please contact support.'
+      });
+    }
+
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,

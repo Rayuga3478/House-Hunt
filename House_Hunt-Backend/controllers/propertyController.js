@@ -1,4 +1,5 @@
 const Property = require('../models/property');
+const User = require('../models/user');
 const ApiResponse = require('../utils/response');
 const {
   uploadMultipleToCloudinary,
@@ -11,6 +12,12 @@ const {
 // @access  Private (Owner only)
 exports.createProperty = async (req, res, next) => {
   try {
+    // Check if owner is blocked
+    const owner = await User.findById(req.user._id);
+    if (owner.isBlocked) {
+      return ApiResponse.error(res, 'Your account is blocked. Cannot create properties.', 403);
+    }
+
     const {
       title,
       description,
@@ -24,10 +31,10 @@ exports.createProperty = async (req, res, next) => {
       parking,
       balcony,
       amenities,
-      isPublished
+      isPublished,
+      occupancyStatus
     } = req.body;
 
-    // Handle amenities (can be comma-separated string or array)
     let amenitiesArray = [];
     if (amenities) {
       amenitiesArray = typeof amenities === 'string'
@@ -35,7 +42,6 @@ exports.createProperty = async (req, res, next) => {
         : amenities;
     }
 
-    // Build property object
     const propertyData = {
       title,
       description,
@@ -50,10 +56,10 @@ exports.createProperty = async (req, res, next) => {
       parking: parking === 'true' || parking === true,
       balcony: balcony === 'true' || balcony === true,
       amenities: amenitiesArray,
-      isPublished: isPublished === 'true' || isPublished === true
+      isPublished: isPublished === 'true' || isPublished === true,
+      occupancyStatus: occupancyStatus || 'available'
     };
 
-    // Add GeoJSON coordinates if provided
     if (latitude && longitude) {
       propertyData.location.coordinates = {
         type: 'Point',
@@ -61,34 +67,22 @@ exports.createProperty = async (req, res, next) => {
       };
     }
 
-    // Handle image uploads
     if (req.files && req.files.length > 0) {
       if (isCloudinaryConfigured()) {
-        // Upload to Cloudinary
         try {
           const imageUrls = await uploadMultipleToCloudinary(req.files);
           propertyData.images = imageUrls;
         } catch (error) {
-          return ApiResponse.error(
-            res,
-            'Failed to upload images. Please try again.',
-            500
-          );
+          return ApiResponse.error(res, 'Failed to upload images. Please try again.', 500);
         }
       } else {
-        // Fallback to local storage
         propertyData.images = req.files.map(file => `/uploads/${file.filename}`);
       }
     }
 
     const property = await Property.create(propertyData);
 
-    ApiResponse.success(
-      res,
-      { property },
-      'Property created successfully',
-      201
-    );
+    ApiResponse.success(res, { property }, 'Property created successfully', 201);
   } catch (error) {
     next(error);
   }
@@ -101,7 +95,7 @@ exports.getProperties = async (req, res, next) => {
   try {
     const {
       city,
-      q, // Text search
+      q,
       minPrice,
       maxPrice,
       minSize,
@@ -112,46 +106,50 @@ exports.getProperties = async (req, res, next) => {
       amenities,
       lat,
       lng,
-      radius, // In meters
+      radius,
       sort = 'newest',
       page = 1,
       limit = 10
     } = req.query;
 
-    // Build query
-    const query = { isPublished: true };
+    // Only show published and available properties to public
+    const query = { 
+      isPublished: true,
+      occupancyStatus: 'available'
+    };
 
-    // City filter
+    // Also filter out properties from blocked owners
+    const blockedOwners = await User.find({ isBlocked: true }).select('_id');
+    const blockedOwnerIds = blockedOwners.map(owner => owner._id);
+    if (blockedOwnerIds.length > 0) {
+      query.owner = { $nin: blockedOwnerIds };
+    }
+
     if (city) {
       query['location.city'] = new RegExp(city, 'i');
     }
 
-    // Text search on title and description
     if (q) {
       query.$text = { $search: q };
     }
 
-    // Price filters
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = parseFloat(minPrice);
       if (maxPrice) query.price.$lte = parseFloat(maxPrice);
     }
 
-    // Size filters
     if (minSize || maxSize) {
       query.size = {};
       if (minSize) query.size.$gte = parseFloat(minSize);
       if (maxSize) query.size.$lte = parseFloat(maxSize);
     }
 
-    // Bedrooms filter (supports multiple values: bedrooms=2,3)
     if (bedrooms) {
       const bedroomsList = bedrooms.split(',').map(b => parseInt(b));
       query.bedrooms = { $in: bedroomsList };
     }
 
-    // Boolean filters
     if (parking !== undefined) {
       query.parking = parking === 'true';
     }
@@ -159,13 +157,11 @@ exports.getProperties = async (req, res, next) => {
       query.balcony = balcony === 'true';
     }
 
-    // Amenities filter (comma-separated)
     if (amenities) {
       const amenitiesList = amenities.split(',').map(a => a.trim());
       query.amenities = { $all: amenitiesList };
     }
 
-    // Geospatial search
     if (lat && lng && radius) {
       const radiusInMeters = parseFloat(radius);
       query['location.coordinates'] = {
@@ -179,7 +175,6 @@ exports.getProperties = async (req, res, next) => {
       };
     }
 
-    // Sorting
     let sortOption = {};
     switch (sort) {
       case 'price_asc':
@@ -195,12 +190,10 @@ exports.getProperties = async (req, res, next) => {
         sortOption = { createdAt: -1 };
     }
 
-    // Pagination
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    // Execute query
     const properties = await Property.find(query)
       .populate('owner', 'name email phone contactInfo')
       .sort(sortOption)
@@ -221,10 +214,15 @@ exports.getProperties = async (req, res, next) => {
 exports.getProperty = async (req, res, next) => {
   try {
     const property = await Property.findById(req.params.id)
-      .populate('owner', 'name email phone contactInfo');
+      .populate('owner', 'name email phone contactInfo isBlocked');
 
     if (!property) {
       return ApiResponse.error(res, 'Property not found', 404);
+    }
+
+    // Check if owner is blocked
+    if (property.owner.isBlocked) {
+      return ApiResponse.error(res, 'This property is no longer available', 404);
     }
 
     ApiResponse.success(res, { property }, 'Property retrieved successfully');
@@ -244,9 +242,14 @@ exports.updateProperty = async (req, res, next) => {
       return ApiResponse.error(res, 'Property not found', 404);
     }
 
-    // Check ownership
     if (property.owner.toString() !== req.user._id.toString()) {
       return ApiResponse.error(res, 'Not authorized to update this property', 403);
+    }
+
+    // Check if owner is blocked
+    const owner = await User.findById(req.user._id);
+    if (owner.isBlocked) {
+      return ApiResponse.error(res, 'Your account is blocked. Cannot update properties.', 403);
     }
 
     const {
@@ -262,10 +265,10 @@ exports.updateProperty = async (req, res, next) => {
       parking,
       balcony,
       amenities,
-      isPublished
+      isPublished,
+      occupancyStatus
     } = req.body;
 
-    // Handle amenities
     let amenitiesArray;
     if (amenities) {
       amenitiesArray = typeof amenities === 'string'
@@ -273,7 +276,6 @@ exports.updateProperty = async (req, res, next) => {
         : amenities;
     }
 
-    // Build update object
     const updateData = {};
     if (title) updateData.title = title;
     if (description) updateData.description = description;
@@ -286,8 +288,8 @@ exports.updateProperty = async (req, res, next) => {
     if (balcony !== undefined) updateData.balcony = balcony === 'true' || balcony === true;
     if (amenitiesArray) updateData.amenities = amenitiesArray;
     if (isPublished !== undefined) updateData.isPublished = isPublished === 'true' || isPublished === true;
+    if (occupancyStatus) updateData.occupancyStatus = occupancyStatus;
 
-    // Update coordinates if provided
     if (latitude && longitude) {
       updateData['location.coordinates'] = {
         type: 'Point',
@@ -295,22 +297,15 @@ exports.updateProperty = async (req, res, next) => {
       };
     }
 
-    // Handle new image uploads
     if (req.files && req.files.length > 0) {
       if (isCloudinaryConfigured()) {
-        // Upload new images to Cloudinary
         try {
           const newImageUrls = await uploadMultipleToCloudinary(req.files);
           updateData.images = [...property.images, ...newImageUrls];
         } catch (error) {
-          return ApiResponse.error(
-            res,
-            'Failed to upload images. Please try again.',
-            500
-          );
+          return ApiResponse.error(res, 'Failed to upload images. Please try again.', 500);
         }
       } else {
-        // Fallback to local storage
         const newImages = req.files.map(file => `/uploads/${file.filename}`);
         updateData.images = [...property.images, ...newImages];
       }
@@ -339,14 +334,11 @@ exports.deleteProperty = async (req, res, next) => {
       return ApiResponse.error(res, 'Property not found', 404);
     }
 
-    // Check ownership
     if (property.owner.toString() !== req.user._id.toString()) {
       return ApiResponse.error(res, 'Not authorized to delete this property', 403);
     }
 
-    // Delete images from Cloudinary if configured
     if (isCloudinaryConfigured() && property.images.length > 0) {
-      // Only delete Cloudinary images (check if URL contains cloudinary.com)
       const cloudinaryImages = property.images.filter(img => 
         img.includes('cloudinary.com')
       );
@@ -356,7 +348,6 @@ exports.deleteProperty = async (req, res, next) => {
       }
     }
 
-    // Soft delete
     property.isDeleted = true;
     await property.save();
 
@@ -377,7 +368,6 @@ exports.togglePublish = async (req, res, next) => {
       return ApiResponse.error(res, 'Property not found', 404);
     }
 
-    // Check ownership
     if (property.owner.toString() !== req.user._id.toString()) {
       return ApiResponse.error(res, 'Not authorized to modify this property', 403);
     }
@@ -394,3 +384,69 @@ exports.togglePublish = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Toggle occupancy status
+// @route   PUT /api/properties/:id/occupancy
+// @access  Private (Owner only)
+exports.toggleOccupancy = async (req, res, next) => {
+  try {
+    const property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return ApiResponse.error(res, 'Property not found', 404);
+    }
+
+    if (property.owner.toString() !== req.user._id.toString()) {
+      return ApiResponse.error(res, 'Not authorized to modify this property', 403);
+    }
+
+    const { occupancyStatus } = req.body;
+
+    if (!['available', 'occupied'].includes(occupancyStatus)) {
+      return ApiResponse.error(res, 'Invalid occupancy status', 400);
+    }
+
+    property.occupancyStatus = occupancyStatus;
+    await property.save();
+
+    ApiResponse.success(
+      res,
+      { property },
+      `Property marked as ${occupancyStatus}`
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get owner's own properties
+// @route   GET /api/properties/my-properties
+// @access  Private (Owner only)
+exports.getMyProperties = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, occupancyStatus } = req.query;
+
+    const query = { owner: req.user._id };
+
+    if (occupancyStatus && ['available', 'occupied'].includes(occupancyStatus)) {
+      query.occupancyStatus = occupancyStatus;
+    }
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    const properties = await Property.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum);
+
+    const total = await Property.countDocuments(query);
+
+    ApiResponse.paginated(res, properties, pageNum, limitNum, total);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = exports;

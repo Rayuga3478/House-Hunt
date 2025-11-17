@@ -43,6 +43,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/properties', require('./routes/properties'));
 app.use('/api/owners', require('./routes/owners'));
+app.use('/api/admin', require('./routes/admin'));
 
 // Health check
 app.get('/health', (req, res) => {

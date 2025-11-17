@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['owner', 'tenant'],
+      enum: ['owner', 'tenant', 'admin'],
       default: 'tenant'
     },
     phone: {
@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema(
     contactInfo: {
       type: String,
       maxlength: [500, 'Contact info cannot exceed 500 characters']
+    },
+    isBlocked: {
+      type: Boolean,
+      default: false
     },
     isDeleted: {
       type: Boolean,

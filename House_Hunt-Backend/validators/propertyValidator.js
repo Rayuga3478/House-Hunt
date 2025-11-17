@@ -31,7 +31,6 @@ const createPropertySchema = Joi.object({
       'string.empty': 'City is required'
     }),
   
-  // Allow string or number for coordinates (form data sends strings)
   latitude: Joi.alternatives()
     .try(
       Joi.number().min(-90).max(90),
@@ -46,7 +45,6 @@ const createPropertySchema = Joi.object({
     )
     .optional(),
   
-  // Allow string or number for numeric fields
   price: Joi.alternatives()
     .try(
       Joi.number().positive(),
@@ -80,7 +78,6 @@ const createPropertySchema = Joi.object({
       'alternatives.match': 'Bedrooms must be a positive integer'
     }),
   
-  // Handle boolean strings from form data
   parking: Joi.alternatives()
     .try(
       Joi.boolean(),
@@ -101,6 +98,10 @@ const createPropertySchema = Joi.object({
       Joi.string().allow('')
     )
     .optional(),
+  
+  occupancyStatus: Joi.string()
+    .valid('available', 'occupied')
+    .default('available'),
   
   isPublished: Joi.alternatives()
     .try(
@@ -170,6 +171,10 @@ const updatePropertySchema = Joi.object({
       Joi.array().items(Joi.string()),
       Joi.string().allow('')
     )
+    .optional(),
+  
+  occupancyStatus: Joi.string()
+    .valid('available', 'occupied')
     .optional(),
   
   isPublished: Joi.alternatives()

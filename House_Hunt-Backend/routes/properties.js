@@ -6,7 +6,9 @@ const {
   getProperty,
   updateProperty,
   deleteProperty,
-  togglePublish
+  togglePublish,
+  toggleOccupancy,
+  getMyProperties
 } = require('../controllers/propertyController');
 const auth = require('../middleware/auth');
 const requireRole = require('../middleware/role');
@@ -52,6 +54,22 @@ router.post(
   auth,
   requireRole('owner'),
   togglePublish
+);
+
+// New route for toggling occupancy status
+router.put(
+  '/:id/occupancy',
+  auth,
+  requireRole('owner'),
+  toggleOccupancy
+);
+
+// Get owner's own properties
+router.get(
+  '/owner/my-properties',
+  auth,
+  requireRole('owner'),
+  getMyProperties
 );
 
 module.exports = router;
